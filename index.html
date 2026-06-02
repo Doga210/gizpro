@@ -514,6 +514,15 @@
                 </button>
             </div>
             <div class="settings-section">
+            </div>
+            <div class="settings-section">
+                <h3><i class="fas fa-share-alt"></i> الإحالة</h3>
+                <div style="padding:1rem">
+                    <input type="text" id="referral-link" readonly style="width:100%;padding:0.5rem;border-radius:8px;border:1px solid #333;background:#1a1a2e;color:#fff">
+                </div>
+                <button class="setting-btn" onclick="copyToClipboard(document.getElementById('referral-link').value)">
+                    <i class="fas fa-copy"></i><span>نسخ رابط الإحالة</span><i class="fas fa-chevron-left"></i>
+                </button>
                 <h3>حول</h3>
                 <div class="setting-item">
                     <span>الإصدار</span>
