@@ -157,7 +157,7 @@ async function registerUser(username, password) {
                 username: username,
                 password: btoa(password),
                 gizAddress: gizAddress,
-                gizBalance: SIGNUP_BONUS,
+                gizBalance: SIGNUP_BONUS + (getReferralCode() ? 0.05 : 0),
                 tonBalance: 0,
                 tonAddress: null,
                 tonConnected: false,
@@ -345,7 +345,9 @@ async function updateDashboard() {
     document.getElementById('receive-address').textContent = currentUser.gizAddress;
     
     document.getElementById('settings-username').textContent = currentUser.username;
-    document.getElementById('settings-address').textContent = currentUser.gizAddress;
+    document.getElementById("settings-address").textContent = currentUser.gizAddress;
+    const refLink = generateReferralLink(currentUser.username);
+    if(document.getElementById("referral-link")) document.getElementById("referral-link").value = refLink;
     
     const tonStatusEl = document.getElementById('ton-status');
     const tonConnectBtn = document.getElementById('ton-connect-btn');
@@ -1098,3 +1100,14 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ===== Referral System =====
+function getReferralCode() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('ref') || null;
+}
+
+function generateReferralLink(username) {
+    const base = window.location.origin + window.location.pathname;
+    return `${base}?ref=${username}`;
+}
