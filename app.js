@@ -1,3 +1,5 @@
+const PLATFORM_TON_ADDRESS = 'UQAtucDs37OAhU3gTMUEBRxm8JhbUT2To3sxe3Qkc1mgHi3C
+const 
 // ===== Gizpro Wallet - Firebase Version =====
 
 const firebaseConfig = {
@@ -412,3 +414,12 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+function showTonDepositAddress() {
+    alert('أرسل TON إلى هذا العنوان:\n\n' + PLATFORM_TON_ADDRESS);
+}
+
+function copyTonAddress() {
+    navigator.clipboard.writeText(PLATFORM_TON_ADDRESS);
+    alert('تم نسخ العنوان!');
+}
+
