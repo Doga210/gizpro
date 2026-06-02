@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gizpro - محفظة GIZ</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="screen active">
+        <div class="splash-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <h1>Gizpro</h1>
+                <p>محفظتك الرقمية المتكاملة</p>
+            </div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen">
+        <div class="auth-container">
+            <div class="logo-small">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h2>مرحباً بك في Gizpro</h2>
+            <p class="auth-subtitle">أنشئ حسابك أو سجل دخولك</p>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="register">إنشاء حساب</button>
+                <button class="auth-tab" data-tab="login">تسجيل دخول</button>
+            </div>
+            
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form active">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="reg-username" placeholder="اسم المستخدم" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="reg-password" placeholder="كلمة المرور" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="reg-confirm" placeholder="تأكيد كلمة المرور" required>
+                </div>
+                
+                <!-- Phone Verification Section -->
+                <div class="phone-verification">
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="reg-phone" placeholder="رقم الهاتف (+9665XXXXXXXX)" required>
+                    </div>
+                    
+                    <div id="phone-step-1">
+                        <button type="button" class="btn-secondary" id="send-code-btn">
+                            <i class="fas fa-paper-plane"></i> إرسال كود التحقق
+                        </button>
+                    </div>
+                    
+                    <div id="phone-step-2" style="display: none;">
+                        <div class="input-group">
+                            <i class="fas fa-key"></i>
+                            <input type="text" id="verification-code" placeholder="أدخل الكود (6 أرقام)" maxlength="6">
+                        </div>
+                        <button type="button" class="btn-secondary" id="verify-code-btn">
+                            <i class="fas fa-check"></i> تأكيد الكود
+                        </button>
+                    </div>
+                    
+                    <div id="phone-verified-badge" style="display: none; color: var(--accent-green); margin-top: 0.5rem;">
+                        <i class="fas fa-check-circle"></i> تم التحقق
+                    </div>
+                    
+                    <input type="hidden" id="phone-verified" value="false">
+                </div>
+                
+                <div id="recaptcha-container"></div>
+                
+                <div class="giz-address-preview">
+                    <span class="label">عنوان GIZ الخاص بك:</span>
+                    <span class="address" id="preview-address">GZ...</span>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    إنشاء حساب + 10 GIZ هدية
+                </button>
+            </form>
+            
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="login-username" placeholder="اسم المستخدم" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="login-password" placeholder="كلمة المرور" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    تسجيل الدخول
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="main-screen" class="screen">
+        <!-- Header -->
+        <header class="app-header">
+            <button class="menu-btn" id="menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-title">
+                <i class="fas fa-gem"></i>
+                <span>Gizpro</span>
+            </div>
+            <button class="notif-btn" id="notif-btn">
+                <i class="fas fa-bell"></i>
+                <span class="badge" id="notif-badge">0</span>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-content">
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <div class="balance-header">
+                    <span class="balance-label">إجمالي الرصيد</span>
+                    <button class="eye-btn" id="toggle-balance">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="balance-amount">
+                    <span class="giz-balance" id="total-giz">0.00</span>
+                    <span class="giz-symbol">GIZ</span>
+                </div>
+                <div class="balance-convert">
+                    <span id="total-ton">≈ 0.00 TON</span>
+                </div>
+                <div class="balance-actions">
+                    <button class="action-btn" id="btn-send">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>إرسال</span>
+                    </button>
+                    <button class="action-btn" id="btn-receive">
+                        <i class="fas fa-qrcode"></i>
+                        <span>استقبال</span>
+                    </button>
+                    <button class="action-btn" id="btn-swap">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>تحويل</span>
+                    </button>
+                    <button class="action-btn" id="btn-history">
+                        <i class="fas fa-history"></i>
+                        <span>سجل</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TON Status Card -->
+            <div class="ton-status-card" id="ton-status-card">
+                <div class="ton-status-header">
+                    <i class="fas fa-link"></i>
+                    <span>محفظة TON</span>
+                    <span class="ton-status-badge" id="ton-status-text">غير متصل</span>
+                </div>
+                <p class="ton-status-desc">ربط محفظة TON لتحويل TON ↔ GIZ</p>
+                <button class="btn-ton-connect" id="btn-ton-connect-main">
+                    <i class="fas fa-link"></i> ربط محفظة TON
+                </button>
+            </div>
+
+            <!-- GIZ Address Display -->
+            <div class="address-card">
+                <div class="address-header">
+                    <span>عنوان GIZ الخاص بك</span>
+                    <button class="copy-btn" id="copy-address">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="address-value" id="user-address">GZ...</div>
+                <div class="address-note">شارك هذا العنوان لاستقبال GIZ</div>
+            </div>
+
+            <!-- Sub-wallets Section -->
+            <div class="subwallets-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-wallet"></i> محافظي GIZ الفرعية</h3>
+                    <button class="add-btn" id="add-subwallet">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="subwallets-grid" id="subwallets-grid"></div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="transactions-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-list"></i> آخر المعاملات</h3>
+                    <button class="view-all" id="view-all-tx">الكل</button>
+                </div>
+                <div class="transactions-list" id="recent-transactions"></div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-page="home">
+                <i class="fas fa-home"></i>
+                <span>رئيسية</span>
+            </button>
+            <button class="nav-item" data-page="swap">
+                <i class="fas fa-exchange-alt"></i>
+                <span>تحويل</span>
+            </button>
+            <button class="nav-item" data-page="wallets">
+                <i class="fas fa-wallet"></i>
+                <span>محافظ</span>
+            </button>
+            <button class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i>
+                <span>إعدادات</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Send Modal -->
+    <div id="send-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-paper-plane"></i> إرسال GIZ</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="send-form">
+                <div class="input-group">
+                    <i class="fas fa-address-card"></i>
+                    <input type="text" id="send-address" placeholder="عنوان GIZ المستلم" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-coins"></i>
+                    <input type="number" id="send-amount" placeholder="المبلغ (GIZ)" step="0.01" min="0.06" required>
+                </div>
+                <div class="fee-info">
+                    <span>رسوم التحويل: <strong>0.05 GIZ</strong></span>
+                    <span>الإجمالي: <strong id="send-total">0.00 GIZ</strong></span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-comment"></i>
+                    <input type="text" id="send-note" placeholder="ملاحظة (اختياري)">
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-check"></i> تأكيد الإرسال
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Receive Modal -->
+    <div id="receive-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-qrcode"></i> استقبال GIZ</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="receive-content">
+                <div class="qr-code" id="qr-code">
+                    <div class="qr-placeholder">
+                        <i class="fas fa-qrcode"></i>
+                        <span>QR Code</span>
+                    </div>
+                </div>
+                <div class="receive-address">
+                    <span class="label">عنوان GIZ الخاص بك:</span>
+                    <div class="address-box">
+                        <span id="receive-address">GZ...</span>
+                        <button class="copy-btn" id="copy-receive">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="share-btns">
+                    <button class="share-btn" id="share-address">
+                        <i class="fas fa-share-alt"></i> مشاركة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swap Modal -->
+    <div id="swap-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exchange-alt"></i> تحويل TON ↔ GIZ</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="swap-content">
+                <div class="swap-direction">
+                    <button class="swap-dir-btn active" data-dir="ton-to-giz">
+                        <span>TON → GIZ</span>
+                        <small>1 TON = 0.1 GIZ</small>
+                    </button>
+                    <button class="swap-dir-btn" data-dir="giz-to-ton">
+                        <span>GIZ → TON</span>
+                        <small>10 GIZ = 1 TON</small>
+                    </button>
+                </div>
+                <div class="swap-input">
+                    <div class="input-group">
+                        <label>من:</label>
+                        <input type="number" id="swap-from-amount" placeholder="0.00" step="0.01">
+                        <span class="currency" id="swap-from-currency">TON</span>
+                    </div>
+                    <div class="swap-arrow">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="input-group">
+                        <label>إلى:</label>
+                        <input type="number" id="swap-to-amount" placeholder="0.00" readonly>
+                        <span class="currency" id="swap-to-currency">GIZ</span>
+                    </div>
+                </div>
+                <div class="swap-info">
+                    <span>سعر الصرف: <strong id="swap-rate">1 TON = 0.1 GIZ</strong></span>
+                </div>
+                <button class="btn-primary" id="confirm-swap">
+                    <i class="fas fa-check"></i> تأكيد التحويل
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TON Connect Modal -->
+    <div id="ton-connect-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-link"></i> ربط محفظة TON</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="ton-connect-content">
+                <div class="ton-info">
+                    <i class="fas fa-info-circle"></i>
+                    <p>أدخل عنوان محفظة TON الخاص بك لتمكين تحويل TON ↔ GIZ</p>
+                </div>
+                <form id="ton-connect-form">
+                    <div class="input-group">
+                        <i class="fas fa-wallet"></i>
+                        <input type="text" id="ton-address-input" placeholder="عنوان TON (مثال: UQ...)" required>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-link"></i> ربط المحفظة
+                    </button>
+                </form>
+                <div class="ton-note">
+                    <p>ملاحظة: يمكنك استخدام GIZ بدون ربط TON</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub-wallet Modal -->
+    <div id="subwallet-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-wallet"></i> إنشاء محفظة فرعية</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="subwallet-form">
+                <div class="input-group">
+                    <i class="fas fa-tag"></i>
+                    <input type="text" id="subwallet-name" placeholder="اسم المحفظة (مثال: يومية)" required>
+                </div>
+                <div class="color-picker">
+                    <span class="label">اختر لون:</span>
+                    <div class="colors">
+                        <button type="button" class="color-btn active" data-color="green" style="background:#00D084"></button>
+                        <button type="button" class="color-btn" data-color="blue" style="background:#0088CC"></button>
+                        <button type="button" class="color-btn" data-color="orange" style="background:#F7931A"></button>
+                        <button type="button" class="color-btn" data-color="purple" style="background:#9B59B6"></button>
+                        <button type="button" class="color-btn" data-color="red" style="background:#FF4757"></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-plus"></i> إنشاء المحفظة
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transfer Between Sub-wallets Modal -->
+    <div id="transfer-subwallet-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exchange-alt"></i> تحويل بين المحافظ</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="transfer-subwallet-form">
+                <div class="input-group">
+                    <label>من:</label>
+                    <select id="from-subwallet" required>
+                        <option value="">اختر المحفظة</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>إلى:</label>
+                    <select id="to-subwallet" required>
+                        <option value="">اختر المحفظة</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-coins"></i>
+                    <input type="number" id="transfer-subwallet-amount" placeholder="المبلغ" step="0.01" min="0.01" required>
+                </div>
+                <div class="fee-info">
+                    <span>رسوم التحويل: <strong>مجاني</strong></span>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-check"></i> تحويل
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- History Screen -->
+    <div id="history-screen" class="screen">
+        <header class="app-header">
+            <button class="back-btn" id="back-from-history">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="header-title">سجل المعاملات</div>
+            <div class="header-spacer"></div>
+        </header>
+        <main class="app-content">
+            <div class="history-filters">
+                <button class="filter-btn active" data-filter="all">الكل</button>
+                <button class="filter-btn" data-filter="sent">مرسلة</button>
+                <button class="filter-btn" data-filter="received">مستلمة</button>
+                <button class="filter-btn" data-filter="swap">تحويل</button>
+            </div>
+            <div class="transactions-list" id="all-transactions"></div>
+        </main>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings-screen" class="screen">
+        <header class="app-header">
+            <button class="back-btn" id="back-from-settings">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="header-title">الإعدادات</div>
+            <div class="header-spacer"></div>
+        </header>
+        <main class="app-content">
+            <div class="settings-section">
+                <h3>المعلومات الشخصية</h3>
+                <div class="setting-item">
+                    <span>اسم المستخدم</span>
+                    <span id="settings-username">-</span>
+                </div>
+                <div class="setting-item">
+                    <span>عنوان GIZ</span>
+                    <span id="settings-address" class="address-text">-</span>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3><i class="fas fa-wallet"></i> محفظة TON</h3>
+                <div class="setting-item">
+                    <span>الحالة</span>
+                    <span id="ton-status"><span style="color: var(--text-muted)">غير متصل</span></span>
+                </div>
+                <button class="setting-btn" id="ton-connect-btn">
+                    <i class="fas fa-link"></i>
+                    <span>ربط محفظة TON</span>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <div class="settings-section">
+                <h3>الأمان</h3>
+                <button class="setting-btn" id="change-password">
+                    <i class="fas fa-lock"></i>
+                    <span>تغيير كلمة المرور</span>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            <div class="settings-section">
+                <h3>البيانات</h3>
+                <button class="setting-btn" id="export-data">
+                    <i class="fas fa-download"></i>
+                    <span>تصدير البيانات</span>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="setting-btn" id="import-data">
+                    <i class="fas fa-upload"></i>
+                    <span>استيراد البيانات</span>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="setting-btn danger" id="clear-data">
+                    <i class="fas fa-trash"></i>
+                    <span>مسح جميع البيانات</span>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            <div class="settings-section">
+                <h3>حول</h3>
+                <div class="setting-item">
+                    <span>الإصدار</span>
+                    <span>1.0.0</span>
+                </div>
+                <div class="setting-item">
+                    <span>رسوم التحويل</span>
+                    <span>0.05 GIZ</span>
+                </div>
+                <div class="setting-item">
+                    <span>سعر الصرف</span>
+                    <span>1 TON = 0.1 GIZ</span>
+                </div>
+            </div>
+            <button class="btn-danger" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+            </button>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">تم بنجاح!</span>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
