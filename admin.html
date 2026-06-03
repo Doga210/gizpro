@@ -210,7 +210,8 @@ function renderUsers(users) {
             <div class="user-card-header">
                 <div>
                     <div class="user-name">${user.username}</div>
-                    <div class="user-id">ID: ${user.gizAddress ? user.gizAddress.substring(0,15) : 'N/A'}...</div>
+                    <div class="user-id" style="cursor:pointer" onclick="navigator.clipboard.writeText(`${user.gizAddress||''}`)">GIZ: ${user.gizAddress ? user.gizAddress.substring(0,15) : 'N/A'}... 📋</div>
+                    <div class="user-id" style="cursor:pointer;color:#0088CC" onclick="navigator.clipboard.writeText(`${user.tonAddress||''}`)">TON: ${user.tonAddress || 'غير متصل'} ${user.tonAddress ? '📋' : ''}</div>
                 </div>
                 <span class="level-badge level-${user.level || 1}">مستوى ${user.level || 1}</span>
             </div>
@@ -233,6 +234,7 @@ function renderUsers(users) {
                 </div>
             </div>
             <div style="margin-top:0.5rem">
+                <button class="btn-small" style="background:#0088CC;color:#fff" onclick="showUserDetails(user_${user.username})">تفاصيل</button>
                 <button class="btn-small btn-add-giz" onclick="toggleAddGiz('${user.username}')">
                     <i class="fas fa-plus"></i> إضافة GIZ
                 </button>
