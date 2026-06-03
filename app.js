@@ -686,11 +686,12 @@ function exportData() {
   showToast('تم التصدير!');
 }
 
+
 async function init() {
-  // تحقق من الجلسة
-  const savedUser = localStorage.getItem("gizpro_user");
-  if (savedUser) {
-    try {
+  setupEventListeners();
+  try {
+    const savedUser = localStorage.getItem("gizpro_user");
+    if (savedUser) {
       const userData = JSON.parse(savedUser);
       const doc = await db.collection("users").doc(userData.username).get();
       if (doc.exists) {
@@ -698,15 +699,9 @@ async function init() {
         setTimeout(() => { showScreen("main-screen"); updateDashboard(); }, 2500);
         return;
       }
-    } catch(e) {}
-  }
-  try {
-    setupEventListeners();
-    setTimeout(() => showScreen('auth-screen'), 2500);
-  } catch (error) {
-    showToast('خطأ في تحميل التطبيق', 'error');
-  }
+    }
+  } catch(e) {}
+  setTimeout(() => showScreen("auth-screen"), 2500);
 }
 
 document.addEventListener('DOMContentLoaded', init);
-ENDOFFILE
