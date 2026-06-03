@@ -542,6 +542,7 @@ function setupEventListeners() {
       showScreen('main-screen');
       updateDashboard();
       showToast(`مرحباً ${username}!`);
+      localStorage.setItem("gizpro_user", JSON.stringify({username}));
     } catch (err) { showToast(err.message || 'خطأ', 'error'); }
   });
 
@@ -684,6 +685,19 @@ function exportData() {
 }
 
 async function init() {
+  // تحقق من الجلسة
+  const savedUser = localStorage.getItem("gizpro_user");
+  if (savedUser) {
+    try {
+      const userData = JSON.parse(savedUser);
+      const doc = await db.collection("users").doc(userData.username).get();
+      if (doc.exists) {
+        currentUser = doc.data();
+        setTimeout(() => { showScreen("main-screen"); updateDashboard(); }, 2500);
+        return;
+      }
+    } catch(e) {}
+  }
   try {
     setupEventListeners();
     setTimeout(() => showScreen('auth-screen'), 2500);
