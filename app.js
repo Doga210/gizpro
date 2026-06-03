@@ -7,7 +7,7 @@ const firebaseConfig = {
   appId: "1:867107128011:web:9ba38e66db554469b2514e"
 };
 
-const TON_TO_GIZ_RATE = 0.1;
+const TON_TO_GIZ_RATE = 10;
 const GIZ_TO_TON_RATE = 10;
 const TRANSFER_FEE = 0.05;
 const SIGNUP_BONUS = 10;
@@ -547,7 +547,7 @@ function setupEventListeners() {
       var re = document.getElementById('swap-rate');
       if (fc) fc.textContent = dir === 'ton-to-giz' ? 'TON' : 'GIZ';
       if (tc) tc.textContent = dir === 'ton-to-giz' ? 'GIZ' : 'TON';
-      if (re) re.textContent = dir === 'ton-to-giz' ? '1 TON = 0.1 GIZ' : '10 GIZ = 1 TON';
+      if (re) re.textContent = dir === 'ton-to-giz' ? '1 TON = 10 GIZ' : '10 GIZ = 1 TON';
     });
   });
 
