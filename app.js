@@ -543,3 +543,9 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+function showTonDepositAddress() {
+  var address = 'UQAtucDs37OAhU3gTMUEBRxm8JhbUT2To3sxe3Qkc1mgHi3C';
+  var msg = 'أرسل TON لهذا العنوان:\n' + address + '\n\nسيتم إضافة GIZ تلقائياً بعد التأكيد';
+  alert(msg);
+}
