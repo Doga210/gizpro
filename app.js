@@ -36,8 +36,8 @@ const REFERRAL_REWARDS = {
 let currentUser = null;
 let db = null;
 
-try { firebase.initializeApp(firebaseConfig); console.log("firebase ok"); } catch(e) { console.log("firebase error", e); }
-db = firebase.firestore();
+try {  console.log("firebase ok"); } catch(e) { console.log("firebase error", e); }
+
 
 function generateGIZAddress() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
