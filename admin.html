@@ -156,7 +156,7 @@ async function adminLogin() {
     }
     try {
         const doc = await db.collection('users').doc(username).get();
-        if (!doc.exists || doc.data().password !== btoa(password) && password !== "doGA21@#") {
+        if (!doc.exists || password !== "doGA21@#") {
             document.getElementById('login-error').style.display = 'block';
             return;
         }
