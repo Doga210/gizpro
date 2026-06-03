@@ -397,7 +397,7 @@ function setupEventListeners() {
       if (page === 'home') showScreen('main-screen');
       else if (page === 'swap') showModal('swap-modal');
       else if (page === 'wallets') showScreen('main-screen');
-      else if (page === 'levels') { showScreen('levels-screen'); renderLevelsUI(); }
+      else if (page === "levels") { showScreen("levels-screen"); if (currentUser) renderLevelsUI(); else showToast("سجل دخول أولاً", "error"); }
       else if (page === 'settings') showScreen('settings-screen');
     });
   });
