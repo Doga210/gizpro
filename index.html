@@ -129,6 +129,7 @@
                 <i class="fas fa-gem"></i>
                 <span>Gizpro</span>
             </div>
+            <button id="lang-btn" onclick="toggleLanguage()" style="background:transparent;border:1px solid #555;color:#fff;border-radius:8px;padding:0.3rem 0.6rem;cursor:pointer;font-family:Cairo,sans-serif;">عر</button>
             <button class="notif-btn" id="notif-btn">
                 <i class="fas fa-bell"></i>
                 <span class="badge" id="notif-badge">0</span>
@@ -155,11 +156,11 @@
                 <div class="balance-actions">
                     <button class="action-btn" id="btn-send">
                         <i class="fas fa-paper-plane"></i>
-                        <span>إرسال</span>
+                        <span data-i18n="send">إرسال</span>
                     </button>
                     <button class="action-btn" id="btn-receive">
                         <i class="fas fa-qrcode"></i>
-                        <span>استقبال</span>
+                        <span data-i18n="receive">استقبال</span>
                     </button>
                     <button class="action-btn" id="btn-swap">
 <div class="ton-status-card" id="ton-status-card">
@@ -181,11 +182,11 @@
     </button>
 </div>
                         <i class="fas fa-exchange-alt"></i>
-                        <span>تحويل</span>
+                        <span data-i18n="swap">تحويل</span>
                     </button>
                     <button class="action-btn" id="btn-withdraw" onclick="showModal('withdraw-modal')">
                         <i class="fas fa-money-bill"></i>
-                        <span>سحب</span>
+                        <span data-i18n="withdraw">سحب</span>
                     </button>
                     <button class="action-btn" id="btn-referral" onclick="copyReferral()">
                         <i class="fas fa-share-alt"></i>
@@ -193,7 +194,7 @@
                     </button>
                     <button class="action-btn" id="btn-history">
                         <i class="fas fa-history"></i>
-                        <span>سجل</span>
+                        <span data-i18n="history">سجل</span>
                     </button>
                 </div>
             </div>
@@ -242,7 +243,7 @@
             </div>
             <button id="click-btn" class="click-btn">
                 <i class="fas fa-gem"></i>
-                <span>انقر للكسب</span>
+                <span data-i18n="clickToEarn">انقر للكسب</span>
             </button>
             <div class="click-progress-bar">
                 <div id="click-progress" class="click-progress-fill"></div>
@@ -264,23 +265,23 @@
         <nav class="bottom-nav">
             <button class="nav-item active" data-page="home">
                 <i class="fas fa-home"></i>
-                <span>رئيسية</span>
+                <span data-i18n="home">رئيسية</span>
             </button>
             <button class="nav-item" data-page="swap">
                 <i class="fas fa-exchange-alt"></i>
-                <span>تحويل</span>
+                <span data-i18n="swap">تحويل</span>
             </button>
             <button class="nav-item" data-page="wallets">
                 <i class="fas fa-wallet"></i>
-                <span>محافظ</span>
+                <span data-i18n="wallets">محافظ</span>
             </button>
             <button class="nav-item" data-page="levels">
                 <i class="fas fa-star"></i>
-                <span>مستويات</span>
+                <span data-i18n="levels">مستويات</span>
             </button>
             <button class="nav-item" data-page="settings">
                 <i class="fas fa-cog"></i>
-                <span>إعدادات</span>
+                <span data-i18n="settings">إعدادات</span>
             </button>
         </nav>
     </div>
