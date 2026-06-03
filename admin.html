@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gizpro Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background: #0a0a1a; color: #fff; min-height: 100vh; }
+        .admin-login { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
+        .login-card { background: #1a1a2e; border-radius: 16px; padding: 2rem; width: 100%; max-width: 400px; }
+        .login-card h2 { text-align: center; margin-bottom: 1.5rem; color: #00D084; }
+        .input-group { margin-bottom: 1rem; }
+        .input-group input { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #333; background: #0a0a1a; color: #fff; font-family: 'Cairo', sans-serif; font-size: 1rem; }
+        .btn { width: 100%; padding: 0.8rem; border: none; border-radius: 8px; background: #00D084; color: #fff; font-size: 1rem; font-family: 'Cairo', sans-serif; cursor: pointer; }
+        .admin-panel { display: none; padding: 1rem; }
+        .admin-header { background: #1a1a2e; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .admin-header h1 { color: #00D084; font-size: 1.2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem; }
+        .stat-card { background: #1a1a2e; border-radius: 12px; padding: 1rem; text-align: center; }
+        .stat-card .num { font-size: 1.8rem; font-weight: bold; color: #00D084; }
+        .stat-card .label { font-size: 0.8rem; color: #888; }
+        .search-bar { background: #1a1a2e; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+        .search-bar input { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #333; background: #0a0a1a; color: #fff; font-family: 'Cairo', sans-serif; }
+        .users-list { display: flex; flex-direction: column; gap: 0.8rem; }
+        .user-card { background: #1a1a2e; border-radius: 12px; padding: 1rem; }
+        .user-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+        .user-id { font-size: 0.75rem; color: #888; }
+        .user-name { font-weight: bold; color: #00D084; }
+        .user-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; font-size: 0.85rem; }
+        .info-item { background: #0a0a1a; border-radius: 8px; padding: 0.5rem; }
+        .info-item .key { color: #888; font-size: 0.75rem; }
+        .info-item .val { color: #fff; font-weight: bold; }
+        .level-badge { padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; }
+        .level-1 { background: #333; }
+        .level-2 { background: #0066aa; }
+        .level-3 { background: #006633; }
+        .level-4 { background: #aa6600; }
+        .level-5 { background: #aa0066; }
+        .withdraw-badge { background: #FF4757; color: #fff; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; }
+        .ton-badge { background: #0088CC; color: #fff; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; }
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; overflow-x: auto; }
+        .tab { padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid #333; background: transparent; color: #888; cursor: pointer; font-family: 'Cairo', sans-serif; white-space: nowrap; }
+        .tab.active { background: #00D084; color: #fff; border-color: #00D084; }
+        .withdraw-card { background: #1a1a2e; border-radius: 12px; padding: 1rem; margin-bottom: 0.8rem; }
+        .withdraw-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .status-pending { color: #F7931A; }
+        .status-done { color: #00D084; }
+        .btn-approve { background: #00D084; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer; font-family: 'Cairo', sans-serif; }
+        .btn-small { padding: 0.4rem 0.8rem; border: none; border-radius: 8px; cursor: pointer; font-family: 'Cairo', sans-serif; font-size: 0.85rem; margin-top: 0.5rem; }
+        .btn-add-giz { background: #00D084; color: #fff; }
+        .btn-danger { background: #FF4757; color: #fff; }
+        .add-giz-form { display: none; margin-top: 0.5rem; }
+        .add-giz-form input { width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid #333; background: #0a0a1a; color: #fff; font-family: 'Cairo', sans-serif; margin-bottom: 0.3rem; }
+        .loading { text-align: center; padding: 2rem; color: #888; }
+        .logout-btn { background: #FF4757; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="admin-login" id="admin-login">
+    <div class="login-card">
+        <h2><i class="fas fa-shield-alt"></i> Admin Panel</h2>
+        <div class="input-group">
+            <input type="text" id="admin-username" placeholder="اسم المستخدم">
+        </div>
+        <div class="input-group">
+            <input type="password" id="admin-password" placeholder="كلمة المرور">
+        </div>
+        <button class="btn" onclick="adminLogin()">دخول</button>
+        <p id="login-error" style="color:#FF4757;text-align:center;margin-top:0.5rem;display:none">خطأ في تسجيل الدخول</p>
+    </div>
+</div>
+
+<!-- Admin Panel -->
+<div class="admin-panel" id="admin-panel">
+    <div class="admin-header">
+        <h1><i class="fas fa-gem"></i> Gizpro Admin</h1>
+        <button class="logout-btn" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="num" id="stat-users">0</div>
+            <div class="label">المستخدمين</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-withdrawals">0</div>
+            <div class="label">طلبات السحب</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-total-giz">0</div>
+            <div class="label">إجمالي GIZ</div>
+        </div>
+        <div class="stat-card">
+            <div class="num" id="stat-levels">0</div>
+            <div class="label">مشتركي المستويات</div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('users')">المستخدمين</button>
+        <button class="tab" onclick="showTab('withdrawals')">طلبات السحب</button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar" id="search-bar">
+        <input type="text" id="search-input" placeholder="بحث بالـ ID أو اسم المستخدم..." oninput="searchUsers()">
+    </div>
+
+    <!-- Users List -->
+    <div id="users-tab">
+        <div class="users-list" id="users-list">
+            <div class="loading">جاري التحميل...</div>
+        </div>
+    </div>
+
+    <!-- Withdrawals -->
+    <div id="withdrawals-tab" style="display:none">
+        <div id="withdrawals-list">
+            <div class="loading">جاري التحميل...</div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCKMyhYwAn8yvlY-_5VEPfwZD4-pVVDcHc",
+    authDomain: "gizpro.firebaseapp.com",
+    projectId: "gizpro",
+    storageBucket: "gizpro.firebasestorage.app",
+    messagingSenderId: "867107128011",
+    appId: "1:867107128011:web:9ba38e66db554469b2514e"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const ADMIN_USERNAME = 'Doga21';
+let allUsers = [];
+let adminUser = null;
+
+async function adminLogin() {
+    const username = document.getElementById('admin-username').value.trim();
+    const password = document.getElementById('admin-password').value;
+    if (username !== ADMIN_USERNAME) {
+        document.getElementById('login-error').style.display = 'block';
+        return;
+    }
+    try {
+        const doc = await db.collection('users').doc(username).get();
+        if (!doc.exists || doc.data().password !== btoa(password)) {
+            document.getElementById('login-error').style.display = 'block';
+            return;
+        }
+        adminUser = doc.data();
+        document.getElementById('admin-login').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        loadData();
+    } catch(e) {
+        document.getElementById('login-error').style.display = 'block';
+    }
+}
+
+function adminLogout() {
+    adminUser = null;
+    document.getElementById('admin-login').style.display = 'flex';
+    document.getElementById('admin-panel').style.display = 'none';
+}
+
+async function loadData() {
+    await loadUsers();
+    await loadWithdrawals();
+}
+
+async function loadUsers() {
+    const snap = await db.collection('users').get();
+    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    
+    document.getElementById('stat-users').textContent = allUsers.length;
+    const totalGiz = allUsers.reduce((s, u) => s + (u.gizBalance || 0), 0);
+    document.getElementById('stat-total-giz').textContent = totalGiz.toFixed(0);
+    const leveled = allUsers.filter(u => u.level > 1).length;
+    document.getElementById('stat-levels').textContent = leveled;
+    
+    renderUsers(allUsers);
+}
+
+async function loadWithdrawals() {
+    const snap = await db.collection('withdrawals').orderBy('timestamp', 'desc').get();
+    const withdrawals = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById('stat-withdrawals').textContent = withdrawals.filter(w => w.status === 'pending').length;
+    renderWithdrawals(withdrawals);
+}
+
+function renderUsers(users) {
+    const list = document.getElementById('users-list');
+    if (users.length === 0) { list.innerHTML = '<div class="loading">لا يوجد مستخدمين</div>'; return; }
+    list.innerHTML = users.map(user => {
+        const levelExpiry = user.level > 1 ? Math.ceil((user.levelExpiry - Date.now()) / (24*60*60*1000)) : 0;
+        return `
+        <div class="user-card">
+            <div class="user-card-header">
+                <div>
+                    <div class="user-name">${user.username}</div>
+                    <div class="user-id">ID: ${user.gizAddress ? user.gizAddress.substring(0,15) : 'N/A'}...</div>
+                </div>
+                <span class="level-badge level-${user.level || 1}">مستوى ${user.level || 1}</span>
+            </div>
+            <div class="user-info">
+                <div class="info-item">
+                    <div class="key">رصيد GIZ</div>
+                    <div class="val">${(user.gizBalance || 0).toFixed(2)}</div>
+                </div>
+                <div class="info-item">
+                    <div class="key">الإحالات</div>
+                    <div class="val">${user.referralCount || 0}</div>
+                </div>
+                <div class="info-item">
+                    <div class="key">محفظة TON</div>
+                    <div class="val" style="font-size:0.7rem">${user.tonConnected ? user.tonAddress.substring(0,10)+'...' : 'غير متصل'}</div>
+                </div>
+                <div class="info-item">
+                    <div class="key">المستوى ينتهي</div>
+                    <div class="val">${user.level > 1 ? (levelExpiry > 0 ? levelExpiry + ' أيام' : 'انتهى') : 'مجاني'}</div>
+                </div>
+            </div>
+            <div style="margin-top:0.5rem">
+                <button class="btn-small btn-add-giz" onclick="toggleAddGiz('${user.username}')">
+                    <i class="fas fa-plus"></i> إضافة GIZ
+                </button>
+                <div class="add-giz-form" id="add-giz-${user.username}">
+                    <input type="number" id="giz-amount-${user.username}" placeholder="المبلغ">
+                    <button class="btn-small btn-add-giz" onclick="addGizToUser('${user.username}')">تأكيد</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderWithdrawals(withdrawals) {
+    const list = document.getElementById('withdrawals-list');
+    if (withdrawals.length === 0) { list.innerHTML = '<div class="loading">لا توجد طلبات</div>'; return; }
+    list.innerHTML = withdrawals.map(w => `
+        <div class="withdraw-card">
+            <div class="withdraw-header">
+                <strong>${w.username}</strong>
+                <span class="${w.status === 'pending' ? 'status-pending' : 'status-done'}">
+                    ${w.status === 'pending' ? 'معلق' : 'تم'}
+                </span>
+            </div>
+            <div style="font-size:0.85rem;color:#888">
+                <div>GIZ: ${w.gizAmount} | TON: ${(w.tonAmount || 0).toFixed(4)}</div>
+                <div style="font-size:0.75rem;margin-top:0.3rem">${w.tonAddress}</div>
+            </div>
+            ${w.status === 'pending' ? `<button class="btn-approve" onclick="approveWithdrawal('${w.id}')">تأكيد الإرسال</button>` : ''}
+        </div>
+    `).join('');
+}
+
+function searchUsers() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    if (!q) { renderUsers(allUsers); return; }
+    const filtered = allUsers.filter(u =>
+        u.username.toLowerCase().includes(q) ||
+        (u.gizAddress && u.gizAddress.toLowerCase().includes(q))
+    );
+    renderUsers(filtered);
+}
+
+function showTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('users-tab').style.display = tab === 'users' ? 'block' : 'none';
+    document.getElementById('withdrawals-tab').style.display = tab === 'withdrawals' ? 'block' : 'none';
+    document.getElementById('search-bar').style.display = tab === 'users' ? 'block' : 'none';
+}
+
+function toggleAddGiz(username) {
+    const form = document.getElementById('add-giz-' + username);
+    form.style.display = form.style.display === 'block' ? 'none' : 'block';
+}
+
+async function addGizToUser(username) {
+    const amount = parseFloat(document.getElementById('giz-amount-' + username).value);
+    if (!amount || amount <= 0) { alert('أدخل مبلغاً صحيحاً'); return; }
+    const doc = await db.collection('users').doc(username).get();
+    if (!doc.exists) { alert('المستخدم غير موجود'); return; }
+    const user = doc.data();
+    user.gizBalance += amount;
+    await db.collection('users').doc(username).set(user);
+    await db.collection('transactions').add({
+        username: username, type: 'admin_add',
+        fromAddress: 'ADMIN', toAddress: user.gizAddress,
+        amount: amount, fee: 0,
+        note: 'إضافة من الأدمن',
+        timestamp: Date.now()
+    });
+    alert('تم إضافة ' + amount + ' GIZ لـ ' + username);
+    loadUsers();
+}
+
+async function approveWithdrawal(withdrawalId) {
+    if (!confirm('هل تأكد إرسال TON؟')) return;
+    await db.collection('withdrawals').doc(withdrawalId).update({ status: 'completed' });
+    alert('تم تأكيد الطلب');
+    loadWithdrawals();
+}
+</script>
+</body>
+</html>
