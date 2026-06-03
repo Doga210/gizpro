@@ -1410,3 +1410,18 @@ body {
     cursor: pointer;
     font-family: 'Cairo', sans-serif;
 }
+.lang-btn {
+    background: none;
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.lang-btn i {
+    font-size: 1rem;
