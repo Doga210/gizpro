@@ -1,3 +1,4 @@
+alert("JS loaded");
 cd ~/Gizpro
 cat > app.js << 'ENDOFFILE'
 const firebaseConfig = {
