@@ -593,8 +593,10 @@ function setupEventListeners() {
       item.classList.add('active');
       if (item.dataset.page === 'settings') showScreen('settings-screen');
       else if (item.dataset.page === 'home') showScreen('main-screen');
-      else if (item.dataset.page === 'earn') showScreen('earn-screen');
-      else if (item.dataset.page === 'levels') showScreen('levels-screen');
+      else if (item.dataset.page === "levels") { showScreen("levels-screen"); renderLevelsUI(); }
+      else if (item.dataset.page === "wallets") showScreen('earn-screen');
+      else if (item.dataset.page === "levels") { showScreen("levels-screen"); renderLevelsUI(); }
+      else if (item.dataset.page === "wallets") showScreen('levels-screen');
     });
   });
 
