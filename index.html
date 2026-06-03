@@ -592,6 +592,22 @@
         </main>
     </div>
 
+    <!-- Wallets Screen -->
+    <div id="wallets-screen" class="screen">
+        <header class="app-header">
+            <button class="back-btn" onclick="showScreen('main-screen')">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="header-title">المحافظ الفرعية</div>
+            <button class="add-btn" onclick="showModal('subwallet-modal')">
+                <i class="fas fa-plus"></i>
+            </button>
+        </header>
+        <main class="app-content">
+            <div id="subwallets-list" class="subwallets-grid"></div>
+        </main>
+    </div>
+
     <!-- Levels Screen -->
     <div id="levels-screen" class="screen">
         <header class="app-header">

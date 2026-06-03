@@ -396,7 +396,7 @@ function setupEventListeners() {
       var page = item.dataset.page;
       if (page === 'home') showScreen('main-screen');
       else if (page === 'swap') showModal('swap-modal');
-      else if (page === 'wallets') showScreen('main-screen');
+      else if (page === "wallets") { showScreen("wallets-screen"); renderSubwallets(); }
       else if (page === "levels") { showScreen("levels-screen"); setTimeout(function() { if (currentUser) renderLevelsUI(); }, 300); }
       else if (page === 'settings') showScreen('settings-screen');
     });
@@ -479,9 +479,45 @@ function setupEventListeners() {
     }
   });
 
-  document.querySelectorAll('.filter-btn').forEach(function(btn) {
+  var subwalletForm = document.getElementById("subwallet-form");
+  if (subwalletForm) subwalletForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    var name = document.getElementById("subwallet-name").value.trim();
+    var color = document.querySelector(".color-btn.active");
+    var colorVal = color ? color.dataset.color : "green";
+    await addSubwallet(name, colorVal);
+    closeAllModals();
+    e.target.reset();
+  });
+
+  document.querySelectorAll(".color-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".color-btn").forEach(function(b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+    });
+  });
+
+  document.querySelectorAll(".filter-btn").forEach(function(btn) {
     btn.addEventListener('click', function() {
-      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      var subwalletForm = document.getElementById("subwallet-form");
+  if (subwalletForm) subwalletForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    var name = document.getElementById("subwallet-name").value.trim();
+    var color = document.querySelector(".color-btn.active");
+    var colorVal = color ? color.dataset.color : "green";
+    await addSubwallet(name, colorVal);
+    closeAllModals();
+    e.target.reset();
+  });
+
+  document.querySelectorAll(".color-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".color-btn").forEach(function(b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+    });
+  });
+
+  document.querySelectorAll(".filter-btn").forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active'); renderAllTransactions(btn.dataset.filter);
     });
   });
@@ -555,4 +591,36 @@ function copyReferral() {
   var link = generateReferralLink(currentUser.username);
   copyToClipboard(link);
   showToast('تم نسخ رابط الإحالة!');
+}
+
+async function renderSubwallets() {
+  var list = document.getElementById('subwallets-list');
+  if (!list || !currentUser) return;
+  try {
+    var snap = await db.collection('subwallets').where('username', '==', currentUser.username).get();
+    var subwallets = snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); });
+    if (subwallets.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:2rem;color:#888"><i class="fas fa-wallet" style="font-size:2rem;display:block;margin-bottom:.5rem"></i>لا توجد محافظ فرعية</div>';
+      return;
+    }
+    var colors = { green: '#00D084', blue: '#0088CC', orange: '#F7931A', purple: '#9B59B6', red: '#FF4757' };
+    list.innerHTML = subwallets.map(function(sw) {
+      return '<div class="subwallet-card" style="--wallet-color:' + (colors[sw.color]||colors.green) + '">' +
+        '<div class="subwallet-icon" style="background:' + (colors[sw.color]||colors.green) + '"><i class="fas fa-wallet"></i></div>' +
+        '<div class="subwallet-name">' + sw.name + '</div>' +
+        '<div class="subwallet-balance">' + (sw.balance||0).toFixed(2) + ' GIZ</div>' +
+        '</div>';
+    }).join('');
+  } catch(e) {}
+}
+
+async function addSubwallet(name, color) {
+  if (!currentUser || !name) return;
+  await db.collection('subwallets').add({
+    username: currentUser.username,
+    name: name, color: color || 'green',
+    balance: 0, createdAt: Date.now()
+  });
+  showToast('تم إنشاء المحفظة!');
+  renderSubwallets();
 }
