@@ -35,7 +35,7 @@ const REFERRAL_REWARDS = {
 let currentUser = null;
 let db = null;
 
-firebase.initializeApp(firebaseConfig);
+try { firebase.initializeApp(firebaseConfig); console.log("firebase ok"); } catch(e) { console.log("firebase error", e); }
 db = firebase.firestore();
 
 function generateGIZAddress() {
@@ -696,6 +696,7 @@ function setupEventListeners() {
 }
 
 async function init() {
+  console.log("init started");
   setupEventListeners();
   try {
     const savedUser = localStorage.getItem('gizpro_user');
@@ -704,12 +705,12 @@ async function init() {
       const doc = await db.collection('users').doc(userData.username).get();
       if (doc.exists) {
         currentUser = doc.data();
-        setTimeout(function() { showScreen('main-screen'); updateDashboard(); }, 2500);
+        alert("before showScreen"); setTimeout(function() { showScreen('main-screen'); updateDashboard(); }, 2500);
         return;
       }
     }
   } catch(e) {}
-  setTimeout(function() { showScreen('auth-screen'); }, 2500);
+  alert("before showScreen"); setTimeout(function() { showScreen('auth-screen'); }, 2500);
 }
 
 document.addEventListener('DOMContentLoaded', init);
