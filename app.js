@@ -397,7 +397,7 @@ function setupEventListeners() {
       if (page === 'home') showScreen('main-screen');
       else if (page === 'swap') showModal('swap-modal');
       else if (page === 'wallets') showScreen('main-screen');
-      else if (page === "levels") { showScreen("levels-screen"); if (currentUser) renderLevelsUI(); else showToast("سجل دخول أولاً", "error"); }
+      else if (page === "levels") { showScreen("levels-screen"); setTimeout(function() { if (currentUser) renderLevelsUI(); }, 300); }
       else if (page === 'settings') showScreen('settings-screen');
     });
   });
@@ -548,4 +548,11 @@ function showTonDepositAddress() {
   var address = 'UQAtucDs37OAhU3gTMUEBRxm8JhbUT2To3sxe3Qkc1mgHi3C';
   var msg = 'أرسل TON لهذا العنوان:\n' + address + '\n\nسيتم إضافة GIZ تلقائياً بعد التأكيد';
   alert(msg);
+}
+
+function copyReferral() {
+  if (!currentUser) return;
+  var link = generateReferralLink(currentUser.username);
+  copyToClipboard(link);
+  showToast('تم نسخ رابط الإحالة!');
 }
