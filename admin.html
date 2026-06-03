@@ -307,6 +307,13 @@ async function addGizToUser(username) {
     loadUsers();
 }
 
+function copyTonAddress(address) {
+  if (!address) { alert("لا يوجد محفظة TON"); return; }
+  navigator.clipboard.writeText(address).then(function() {
+    alert("تم نسخ العنوان: " + address);
+  });
+}
+
 async function approveWithdrawal(withdrawalId) {
     if (!confirm('هل تأكد إرسال TON؟')) return;
     await db.collection('withdrawals').doc(withdrawalId).update({ status: 'completed' });
