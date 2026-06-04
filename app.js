@@ -565,6 +565,7 @@ function setupEventListeners() {
 
 async function init() {
   setupEventListeners();
+  applyLang();
   try {
     var savedUser = localStorage.getItem('gizpro_user');
     if (savedUser) {
@@ -625,4 +626,89 @@ async function addSubwallet(name, color) {
   });
   showToast('تم إنشاء المحفظة!');
   renderSubwallets();
+}
+
+// ===== Language System =====
+var currentLang = localStorage.getItem('lang') || 'ar';
+
+var i18n = {
+  ar: {
+    send: 'إرسال', receive: 'استقبال', swap: 'تحويل',
+    history: 'سجل', withdraw: 'سحب', referral: 'إحالة',
+    home: 'رئيسية', wallets: 'محافظ', levels: 'مستويات',
+    settings: 'إعدادات', clickToEarn: 'انقر للكسب',
+    totalBalance: 'إجمالي الرصيد', logout: 'تسجيل الخروج',
+    register: 'إنشاء حساب', login: 'تسجيل دخول',
+    welcome: 'مرحباً بك في Gizpro',
+    subtitle: 'محفظتك الرقمية المتكاملة',
+    createAccount: 'إنشاء حساب + 10 GIZ هدية',
+    signIn: 'تسجيل الدخول', free: 'مجاني',
+    buy: 'شراء', daily: 'يومياً', perClick: 'نقرة',
+    tenDays: '10 أيام', referralLink: 'رابط الإحالة',
+    copyLink: 'نسخ رابط الإحالة', about: 'حول',
+    version: 'الإصدار', security: 'الأمان',
+    changePass: 'تغيير كلمة المرور',
+    exportData: 'تصدير البيانات', clearData: 'مسح البيانات',
+    myAddress: 'عنوان GIZ الخاص بك',
+    noTx: 'لا توجد معاملات', recentTx: 'آخر المعاملات',
+    tonWallet: 'محفظة TON', notConnected: 'غير متصل',
+    connectTON: 'ربط محفظة TON', depositTON: 'إيداع TON'
+  },
+  en: {
+    send: 'Send', receive: 'Receive', swap: 'Swap',
+    history: 'History', withdraw: 'Withdraw', referral: 'Referral',
+    home: 'Home', wallets: 'Wallets', levels: 'Levels',
+    settings: 'Settings', clickToEarn: 'Click to Earn',
+    totalBalance: 'Total Balance', logout: 'Logout',
+    register: 'Create Account', login: 'Login',
+    welcome: 'Welcome to Gizpro',
+    subtitle: 'Your Integrated Digital Wallet',
+    createAccount: 'Create Account + 10 GIZ Gift',
+    signIn: 'Sign In', free: 'Free',
+    buy: 'Buy', daily: 'Daily', perClick: 'Per Click',
+    tenDays: '10 Days', referralLink: 'Referral Link',
+    copyLink: 'Copy Referral Link', about: 'About',
+    version: 'Version', security: 'Security',
+    changePass: 'Change Password',
+    exportData: 'Export Data', clearData: 'Clear Data',
+    myAddress: 'Your GIZ Address',
+    noTx: 'No Transactions', recentTx: 'Recent Transactions',
+    tonWallet: 'TON Wallet', notConnected: 'Not Connected',
+    connectTON: 'Connect TON Wallet', depositTON: 'Deposit TON'
+  }
+};
+
+function t(key) {
+  return i18n[currentLang][key] || i18n['ar'][key] || key;
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'ar' ? 'en' : 'ar';
+  localStorage.setItem('lang', currentLang);
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.lang = currentLang;
+  var langBtn = document.getElementById('lang-btn');
+  if (langBtn) langBtn.textContent = currentLang === 'ar' ? 'EN' : 'عر';
+  applyLang();
+}
+
+function applyLang() {
+  var map = {
+    'span-send': 'send', 'span-receive': 'receive',
+    'span-swap': 'swap', 'span-history': 'history',
+    'span-withdraw': 'withdraw', 'span-referral': 'referral',
+    'nav-home': 'home', 'nav-wallets': 'wallets',
+    'nav-levels': 'levels', 'nav-settings': 'settings',
+    'click-label': 'clickToEarn', 'balance-label': 'totalBalance',
+    'referral-label': 'referralLink', 'copy-referral-btn': 'copyLink',
+    'my-address-label': 'myAddress', 'recent-tx-label': 'recentTx',
+    'ton-wallet-label': 'tonWallet', 'logout-btn': 'logout',
+    'deposit-label': 'depositTON'
+  };
+  Object.keys(map).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = t(map[id]);
+  });
+  var langBtn = document.getElementById('lang-btn');
+  if (langBtn) langBtn.textContent = currentLang === 'ar' ? 'EN' : 'عر';
 }
