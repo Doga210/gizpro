@@ -11,7 +11,7 @@ const TON_TO_GIZ_RATE = 10;
 const GIZ_TO_TON_RATE = 10;
 const TRANSFER_FEE = 0.05;
 const SIGNUP_BONUS = 10;
-const MIN_WITHDRAWAL = 250;
+const MIN_WITHDRAWAL_TON = 25;
 const WITHDRAWAL_FEE = 0.05;
 
 const LEVELS = {
@@ -197,8 +197,9 @@ async function buyLevel(levelNum) {
   renderLevelsUI();
 }
 
-async function requestWithdrawal(amount) {
-  if (amount < MIN_WITHDRAWAL) { showToast('الحد الأدنى ' + MIN_WITHDRAWAL + ' GIZ', 'error'); return; }
+async function requestWithdrawal(tonAmount) {
+  var amount = tonAmount * GIZ_TO_TON_RATE;
+  if (tonAmount < MIN_WITHDRAWAL_TON) { showToast("الحد الأدنى " + MIN_WITHDRAWAL_TON + " TON", "error"); return; }
   if (amount > currentUser.gizBalance) { showToast('رصيد غير كافٍ', 'error'); return; }
   if (!currentUser.tonConnected) { showToast('يجب ربط محفظة TON أولاً', 'error'); return; }
   var fee = amount * WITHDRAWAL_FEE;
