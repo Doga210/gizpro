@@ -82,7 +82,7 @@ function getReferralCode() {
 }
 
 function generateReferralLink(username) {
-  return window.location.origin + window.location.pathname + '?ref=' + username;
+  return window.location.origin + window.location.pathname + "?ref=" + (currentUser.userId || currentUser.username);
 }
 
 async function registerUser(username, password) {
@@ -101,19 +101,23 @@ async function registerUser(username, password) {
     levelExpiry: now + (10 * 24 * 60 * 60 * 1000),
     todayClicks: 0, todayEarned: 0,
     lastClickDate: new Date().toDateString(),
-    totalEarned: 0, referralCount: 0, createdAt: now
+    totalEarned: 0, referralCount: 0, createdAt: now, userId: Math.floor(100000 + Math.random() * 900000)
   };
   await userRef.set(user);
   await addTransaction({ username: username, type: 'signup_bonus', fromAddress: 'SYSTEM', toAddress: gizAddress, amount: bonus, fee: 0, note: 'هدية التسجيل', timestamp: now });
   if (refCode) {
     try {
-      var refDoc = await db.collection('users').doc(refCode).get();
+      var refQuery = await db.collection("users").where("userId", "==", parseInt(refCode)).get();
+      if (refQuery.empty) return;
+      var refDoc = refQuery.docs[0];
+      var refUser = refDoc.data();
+      var refUsername = refDoc.id;
       if (refDoc.exists) {
         var refUser = refDoc.data();
         refUser.gizBalance += REFERRAL_REWARDS.register;
         refUser.referralCount = (refUser.referralCount || 0) + 1;
-        await db.collection('users').doc(refCode).set(refUser);
-        await addTransaction({ username: refCode, type: 'referral_reward', fromAddress: 'SYSTEM', toAddress: refUser.gizAddress, amount: REFERRAL_REWARDS.register, fee: 0, note: 'مكافأة إحالة: ' + username, timestamp: now });
+        await db.collection("users").doc(refUsername).set(refUser);
+        await addTransaction({ username: refUsername, type: 'referral_reward', fromAddress: 'SYSTEM', toAddress: refUser.gizAddress, amount: REFERRAL_REWARDS.register, fee: 0, note: 'مكافأة إحالة: ' + username, timestamp: now });
       }
     } catch(e) {}
   }
