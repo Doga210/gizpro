@@ -713,3 +713,150 @@ function applyLang() {
   var langBtn = document.getElementById('lang-btn');
   if (langBtn) langBtn.textContent = currentLang === 'ar' ? 'EN' : 'عر';
 }
+// التحقق من رقم الهاتف — تسجيل واحد فقط
+async function sendVerificationCode() {
+    const phone = document.getElementById('reg-phone').value;
+    
+    if (!phone || phone.length < 10) {
+        showToast('أدخل رقم هاتف صحيح!', 'error');
+        return;
+    }
+    
+    // إنشاء كود عشوائي (6 أرقام)
+    const code = Math.floor(100000 + Math.random() * 900000);
+    
+    // حفظ الكود مؤقتاً
+    localStorage.setItem('verifyCode_' + phone, code);
+    
+    // عرض الكود (للاختبار فقط — في الإنتاج: إرسال SMS)
+    alert('كود التحقق: ' + code);
+    
+    // إظهار حقل كود التحقق
+    document.getElementById('verify-section').style.display = 'block';
+    showToast('تم إرسال كود التحقق!');
+}
+
+async function verifyCode() {
+    const phone = document.getElementById('reg-phone').value;
+    const inputCode = document.getElementById('verify-code').value;
+    const savedCode = localStorage.getItem('verifyCode_' + phone);
+    
+    if (inputCode === savedCode) {
+        document.getElementById('phone-verified').style.display = 'block';
+        document.getElementById('verify-section').style.display = 'none';
+        document.getElementById('send-code-btn').style.display = 'none';
+        showToast('تم التحقق من رقم الهاتف!');
+    } else {
+        showToast('كود التحقق غير صحيح!', 'error');
+    }
+}
+
+async function checkPhoneExists(phone) {
+    // التحقق من Firebase
+    const users = await db.collection('users').where('phone', '==', phone).get();
+    return !users.empty;
+}
+
+async function registerWithPhone(username, password, phone) {
+    // التحقق من رقم الهاتف
+    const isVerified = document.getElementById('phone-verified').style.display === 'block';
+    if (!isVerified) {
+        showToast('يجب التحقق من رقم الهاتف أولاً!', 'error');
+        return;
+    }
+    
+    // التحقق من عدم التكرار
+    const isExists = await checkPhoneExists(phone);
+    if (isExists) {
+        showToast('رقم الهاتف مستخدم مسبقاً! حساب واحد فقط لكل هاتف.', 'error');
+        return;
+    }
+    
+    // إنشاء حساب
+    await db.collection('users').add({
+        username,
+        password, // يجب تشفيره!
+        phone,
+        createdAt: Date.now(),
+        level: 1,
+        gizBalance: 10 // هدية التسجيل
+    });
+    
+    showToast('تم إنشاء الحساب بنجاح!');
+}
+
+// التحقق من رقم الهاتف — تسجيل واحد فقط
+async function sendVerificationCode() {
+    var phone = document.getElementById('reg-phone').value;
+    if (!phone || phone.length < 10) {
+        showToast('أدخل رقم هاتف صحيح!', 'error');
+        return;
+    }
+    var code = Math.floor(100000 + Math.random() * 900000);
+    localStorage.setItem('verifyCode_' + phone, code);
+    alert('كود التحقق: ' + code);
+    document.getElementById('verify-section').style.display = 'block';
+    showToast('تم إرسال كود التحقق!');
+}
+
+async function verifyCode() {
+    var phone = document.getElementById('reg-phone').value;
+    var inputCode = document.getElementById('verify-code').value;
+    var savedCode = localStorage.getItem('verifyCode_' + phone);
+    if (inputCode === savedCode) {
+        document.getElementById('phone-verified').style.display = 'block';
+        document.getElementById('verify-section').style.display = 'none';
+        document.getElementById('send-code-btn').style.display = 'none';
+        showToast('تم التحقق من رقم الهاتف!');
+    } else {
+        showToast('كود التحقق غير صحيح!', 'error');
+    }
+}
+
+async function checkPhoneExists(phone) {
+    var users = await db.collection('users').where('phone', '==', phone).get();
+    return !users.empty;
+}
+
+async function registerWithPhone(e) {
+    e.preventDefault();
+    var username = document.getElementById('reg-username').value;
+    var password = document.getElementById('reg-password').value;
+    var confirm = document.getElementById('reg-confirm').value;
+    var phone = document.getElementById('reg-phone').value;
+    
+    if (!username || !password || !phone) {
+        showToast('أكمل جميع الحقول!', 'error');
+        return;
+    }
+    if (password !== confirm) {
+        showToast('كلمات المرور غير متطابقة!', 'error');
+        return;
+    }
+    
+    var isVerified = document.getElementById('phone-verified').style.display === 'block';
+    if (!isVerified) {
+        showToast('يجب التحقق من رقم الهاتف أولاً!', 'error');
+        return;
+    }
+    
+    var isExists = await checkPhoneExists(phone);
+    if (isExists) {
+        showToast('رقم الهاتف مستخدم مسبقاً! حساب واحد فقط لكل هاتف.', 'error');
+        return;
+    }
+    
+    await db.collection('users').add({
+        username: username,
+        password: password,
+        phone: phone,
+        createdAt: Date.now(),
+        level: 1,
+        gizBalance: 10,
+        tonAddress: null,
+        tonConnected: false
+    });
+    
+    showToast('تم إنشاء الحساب بنجاح! +10 GIZ هدية');
+    await login(username, password);
+}
