@@ -243,7 +243,7 @@ function renderLevelsUI() {
       '<div>10 أيام: <strong>' + (level.dailyLimit * 10) + ' GIZ</strong></div>' +
       '</div>' +
       (parseInt(num) === 1 ? '<div class="level-price">مجاني</div>' :
-      '<button class="btn-buy-level" onclick="buyLevel(' + num + ')">شراء - ' + level.price + ' GIZ</button>') +
+      '<button class="btn-buy-level" onclick="buyLevel(' + num + ')">شراء - ' + level.price + ' GIZ / ' + (level.price/10).toFixed(1) + ' TON</button>') +
       '</div>';
   }).join('');
 }
