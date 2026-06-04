@@ -108,16 +108,13 @@ async function registerUser(username, password) {
   if (refCode) {
     try {
       var refQuery = await db.collection("users").where("userId", "==", parseInt(refCode)).get();
-      if (refQuery.empty) return;
-      var refDoc = refQuery.docs[0];
-      var refUser = refDoc.data();
-      var refUsername = refDoc.id;
-      if (refDoc.exists) {
-        var refUser = refDoc.data();
-        refUser.gizBalance += REFERRAL_REWARDS.register;
-        refUser.referralCount = (refUser.referralCount || 0) + 1;
-        await db.collection("users").doc(refUsername).set(refUser);
-        await addTransaction({ username: refUsername, type: 'referral_reward', fromAddress: 'SYSTEM', toAddress: refUser.gizAddress, amount: REFERRAL_REWARDS.register, fee: 0, note: 'مكافأة إحالة: ' + username, timestamp: now });
+      if (!refQuery.empty) {
+        var refDocData = refQuery.docs[0].data();
+        var refUsername = refQuery.docs[0].id;
+        refDocData.gizBalance += REFERRAL_REWARDS.register;
+        refDocData.referralCount = (refDocData.referralCount || 0) + 1;
+        await db.collection("users").doc(refUsername).set(refDocData);
+        await addTransaction({ username: refUsername, type: "referral_reward", fromAddress: "SYSTEM", toAddress: refDocData.gizAddress, amount: REFERRAL_REWARDS.register, fee: 0, note: "مكافأة إحالة: " + username, timestamp: now });
       }
     } catch(e) {}
   }
