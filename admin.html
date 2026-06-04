@@ -225,7 +225,7 @@ function renderUsers(users) {
                 </div>
                 <div class="info-item">
                     <div class="key">محفظة TON</div>
-                    <div class="val" style="font-size:0.7rem;cursor:pointer;color:#0088CC" onclick="if(`${user.tonAddress||''}`) { navigator.clipboard.writeText(`${user.tonAddress||''}`); alert(`تم النسخ: ${user.tonAddress||'لا يوجد'}`); }">${user.tonConnected ? user.tonAddress + ' 📋' : 'غير متصل'}</div>
+                    <div class="val" style="font-size:0.7rem">${user.tonConnected ? user.tonAddress.substring(0,10)+'...' : 'غير متصل'}</div>
                 </div>
                 <div class="info-item">
                     <div class="key">المستوى ينتهي</div>
