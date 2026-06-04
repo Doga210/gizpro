@@ -296,7 +296,7 @@ async function updateDashboard() {
   el = document.getElementById('receive-address'); if (el) el.textContent = currentUser.gizAddress;
   el = document.getElementById('settings-username'); if (el) el.textContent = currentUser.username;
   el = document.getElementById('settings-address'); if (el) el.textContent = currentUser.gizAddress;
-  el = document.getElementById('referral-link'); if (el) el.value = generateReferralLink(currentUser.username);
+  el = document.getElementById('referral-link'); if (el) el.value = generateReferralLink(currentUser.userId || currentUser.username);
   el = document.getElementById('click-level'); if (el) el.textContent = 'المستوى ' + (currentUser.level || 1);
   el = document.getElementById('click-earned'); if (el) el.textContent = formatAmount(currentUser.todayEarned || 0) + ' / ' + level.dailyLimit + ' GIZ';
   el = document.getElementById('click-progress'); if (el) el.style.width = (((currentUser.todayEarned||0)/level.dailyLimit)*100)+'%';
@@ -589,7 +589,7 @@ function showTonDepositAddress() {
 
 function copyReferral() {
   if (!currentUser) return;
-  var link = generateReferralLink(currentUser.username);
+  var link = generateReferralLink(currentUser.userId || currentUser.username);
   copyToClipboard(link);
   showToast('تم نسخ رابط الإحالة!');
 }
