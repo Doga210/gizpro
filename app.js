@@ -126,6 +126,7 @@ async function loginUser(username, password) {
   if (!doc.exists) throw new Error('اسم المستخدم غير موجود');
   var user = doc.data();
   if (user.password !== btoa(password)) throw new Error('كلمة المرور غير صحيحة');
+  if (!user.userId) { user.userId = Math.floor(100000 + Math.random() * 900000); db.collection("users").doc(username).set(user); }
   currentUser = user;
   return user;
 }
